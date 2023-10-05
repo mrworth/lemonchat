@@ -1,0 +1,76 @@
+.App{
+  display:flex;
+  background-color: rgb(170, 170, 170);
+  border-color: rgb(170, 170, 170);
+  flex-direction: column;
+  min-height:100vh;
+  padding-top:8vh;
+  overflow:hidden;
+  font-size:3vw;
+  width:100vw;
+  padding-right:0;
+}
+.navbar{
+  background-color: rgb(223, 190, 84);
+  color: white;
+  height:8vh;
+  width:100%;
+  position:fixed;
+  margin-top:-8vh;
+  font-family: Impact;
+  font-size: min(3vh,10vw);
+}
+.name-bar{
+  margin: -4vh 0 0 1vh;
+  position: fixed;
+  font-family: Impact;
+  font-size: min(3vh,10vw);
+  color: white;
+  overflow: hidden;
+}
+.blur-pane{
+  /*background-color: white;*/
+  height: 92vh;
+  width: 100%;
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+}
+.content-pane{
+  /*background-color:white;*/
+  flex-direction: row;
+  display:flex;
+  min-width: 100%;
+  flex:1;
+  overflow-x: auto;
+}
+.content-pane::-webkit-scrollbar {
+  display: none;
+}
+.content-column{
+  /*background-color:white;*/
+  flex: 1;
+  border: 2px solid rgb(170, 170, 170);
+  display:flex;
+  flex-direction: column;
+  margin: 0 0% 0 1.5%;
+  min-width:35%;
+  height: fit-content;
+  padding-bottom: 10%;
+}
+.content-row{
+  /*border:2px solid black;*/
+  height: min(20vh,20vw);
+  /*background:white;*/
+  padding-top: 5%;
+}
+.content-message{
+  background-color: #f0f0f0;
+  width: 95%;
+  display: flex;
+  height: 100%;
+  margin: 0 auto;
+  border-radius: 8px;
+  padding: 0% 0 0 3%;
+}
+
