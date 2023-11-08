@@ -1,78 +1,22 @@
+import React from 'react';
 import './App.css';
+import { Provider } from 'react-redux';
+import store from './store'; 
+import PostList from './components/PostList'; 
 
 function App() {
   return (
-    <div className="App">
-      <div className="navbar">
-        
+    <Provider store={store}>
+      <div className="App">
+        <div className="navbar"></div>
+        <div className="name-bar">
+            LemonChat
+            <img src="/lemon-transparent.png" className="logo-image" alt="Lemon Logo" />
+        </div>
+        <div className="blur-pane"></div>
+        <PostList />
       </div>
-      <div className="name-bar">LemonChat</div>
-      <div className="blur-pane"></div>
-      <div className="content-pane">
-        <div className="content-column">
-        <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test1</div>
-          </div>
-          <div className="content-row">
-            <div className="content-message">test5</div>
-          </div>
-        </div>
-        <div className="content-column">
-          <div className="content-row">
-            <div className="content-message">test2</div>
-          </div>
-        </div>
-        <div className="content-column">
-          <div className="content-row">
-            <div className="content-message">test3</div>
-          </div>
-        </div>
-        <div className="content-column">
-          <div className="content-row">
-            <div className="content-message">test3</div>
-          </div>
-        </div>
-        <div className="content-column">
-          <div className="content-row">
-            <div className="content-message">test3</div>
-          </div>
-        </div>
-        <div className="content-column">
-          <div className="content-row">
-          </div>
-        </div>
-      </div>
-    </div>
+    </Provider>
   );
 }
 

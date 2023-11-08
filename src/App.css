@@ -11,7 +11,7 @@
   padding-right:0;
 }
 .navbar{
-  background-color: rgb(223, 190, 84);
+  background-color: rgb(221, 219, 103);
   color: white;
   height:8vh;
   width:100%;
@@ -25,8 +25,14 @@
   position: fixed;
   font-family: Impact;
   font-size: min(3vh,10vw);
-  color: white;
+  color: rgb(255, 255, 255);
   overflow: hidden;
+  text-shadow: 0.1em 0.2em 0.5em #5f5f5f;
+  user-select: none;
+}
+.logo-image{
+  width: 2vw;
+  min-width: 3.5vh;
 }
 .blur-pane{
   /*background-color: white;*/
@@ -69,8 +75,15 @@
   width: 95%;
   display: flex;
   height: 100%;
-  margin: 0 auto;
+  margin: 0 auto 3% auto;
   border-radius: 8px;
   padding: 0% 0 0 3%;
+  flex-direction: column;
+}
+.message-topbar{
+  font-size: 1.5vw;
+  height:11%;
+  text-align: right;
+  margin: 1% 5% 0 0;
 }
 
