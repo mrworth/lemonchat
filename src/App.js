@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import { Provider } from 'react-redux';
 import store from './store'; 
-import PostList from './components/PostList'; 
+import ThreadList from './components/ThreadList'; 
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
             <img src="/lemon-transparent.png" className="logo-image" alt="Lemon Logo" />
         </div>
         <div className="blur-pane"></div>
-        <PostList />
+        <ThreadList />
       </div>
     </Provider>
   );

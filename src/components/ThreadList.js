@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectPosts } from '../slices/postSlice';
-import Post from './Post';
+import Thread from './Thread';
+import UniqueToggle from './UniqueToggle';
+import NewThread from './NewThread';
 
-const PostList = () => {
+const ThreadList = () => {
   const topics = useSelector(selectPosts);
   console.log(topics)
   console.log(Object.values(topics)[0])
@@ -11,10 +13,12 @@ const PostList = () => {
     <div className="content-pane">
         {Object.values(topics).map((topic) => (
           <div className="content-column" key={topic.id}>{`${topic.title}`}
+            <UniqueToggle componentName="NewThread">
+              <NewThread topic={topic}/>
+            </UniqueToggle>
             {Object.values(topic.threads).map((thread) => (
               <div className="content-row" key={thread.id}>
-                <Post key={thread.id} {...thread}>
-                </Post>
+                <Thread key={thread.id} {...thread}/>
               </div>
             ))}
           </div>
@@ -24,4 +28,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default ThreadList;

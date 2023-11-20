@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import postReducer from './slices/postSlice'; 
+import postReducer from './slices/postSlice';
+import formVisibilityReducer from './slices/formVisibilitySlice'; 
 import thunk from 'redux-thunk';
 
 const store = configureStore({
-  reducer: postReducer,
+  reducer: {
+    posts: postReducer,
+    formVisibility: formVisibilityReducer
+  },
   middleware: [thunk],
 });
 

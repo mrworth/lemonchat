@@ -7,43 +7,42 @@ export const postSlice = createSlice({
     messages:{
         //contains ids of posts and their replies for structure
         idTree:{
-            "1ab5s": ["9bsln"],
+            "1ab5s": ["9bsln","lf9pds"],
             "9bsln": ["fbn2s"],
             "fbn2s": [],
-            "mpn52s": []
+            "mpn52s": [],
+            "lf9pds": []
         },
         byId:{
             "1ab5s":{
                 user: "username",
-                //description for topics, content otherwise
                 content: "topic description example",
                 //only used for topics and top level thread posts
-                title: "example topic",
-                replyTo: null,
-                id: "1ab5s"
+                title: "example topic"
             },
             "9bsln":{
                 user: "username",
                 content: "example thread content",
-                title: "example thread title",
-                replyTo: "1ab5s",
-                id: "9bsln"
+                title: "example thread title"
             },
             "fbn2s":{
                 user: "username",
                 content: "example message content",
-                title: null,
-                replyTo: "9bsln",
-                id: "fbn2s"
+                title: null
             },
             "mpn52s":{
                 user: "username",
                 //description for topics, content otherwise
                 content: "topic description example 2",
                 //only used for topics and top level thread posts
-                title: "example topic 2",
-                replyTo: null,
-                id: "mpn52s"
+                title: "example topic 2"
+            },
+            "lf9pds":{
+                user: "username",
+                //description for topics, content otherwise
+                content: "thread description example 2",
+                //only used for topics and top level thread posts
+                title: "example thread 2"
             }
         }
     }
@@ -79,44 +78,53 @@ export const postSlice = createSlice({
 
 export const { addTopic, addThread, addMessage } = postSlice.actions;
 export const selectPosts = (state) => {
+    const postsState = state.posts;
     const structuredTree = [];
   
     //recursive function to generate tree of messages
     const buildTree = (currentId) => {
-        const childIdList = state.messages.idTree[currentId];
+        const childIdList = postsState.messages.idTree[currentId];
         if(childIdList.length === 0 ){
             return {
-                ...state.messages.byId[currentId],
+                ...postsState.messages.byId[currentId],
                 replies: []
             };
         }else{
             const currentObject = {
-                ...state.messages.byId[currentId],
+                ...postsState.messages.byId[currentId],
                 replies: []
             }
             for(const messageId of childIdList){
                 const reply = buildTree(messageId);
-                currentObject.replies.push({[messageId]: reply});
+                currentObject.replies.push({
+                    ...reply,
+                    replyTo: currentId, 
+                    id: messageId
+                });
             }
             return currentObject;
         }
     }
     // Iterate through the topics
-    for (const topicId of state.topics) {
+    for (const topicId of postsState.topics) {
       const topicItem = {
-        ...state.messages.byId[topicId], // Add the base topic
+        ...postsState.messages.byId[topicId], // Add the base topic
         threads: [],
+        id: topicId,
+        replyTo: null
       };
   
       // Iterate across child elements (threads) of topics
-      for (const threadId of state.messages.idTree[topicId]) {
+      for (const threadId of postsState.messages.idTree[topicId]) {
         const threadMessage = {
-            ...state.messages.byId[threadId],
-            replies: []
+            ...postsState.messages.byId[threadId],
+            replies: [],
+            id: threadId,
+            replyTo: topicId
         };
         const threadStructure = buildTree(threadId);
         threadMessage.replies = threadStructure.replies; // Assign replies from the structure
-        topicItem.threads.push( threadMessage);
+        topicItem.threads.push(threadMessage);
       }
       structuredTree.push(topicItem);
     }
