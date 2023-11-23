@@ -1,8 +1,7 @@
-// UniqueToggle.js
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { toggleVisibility } from '../slices/formVisibilitySlice'; // Adjust the import path as needed
+import { toggleVisibility } from '../slices/formVisibilitySlice';
 
 const UniqueToggle = ({ children, componentName }) => {
     const [uuid] = useState(uuidv4());

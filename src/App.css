@@ -82,6 +82,7 @@
   padding: 0% 0 0 3%;
   flex-direction: column;
   font-size: 1.5vw;
+  user-select: none;
 }
 .message-topbar{
   font-size: 1.5vw;
@@ -164,5 +165,21 @@
 
 .large-text{
   font-size: min(3.5vh,13vw);
+}
+
+.reply-container{
+  position: absolute;
+  left: 105%;
+  top: 0;
+  width: 100%;
+}
+
+.message-container{
+  height: 100%;
+  position: relative;
+}
+
+.focused-message{
+  background-color: orange;
 }
 

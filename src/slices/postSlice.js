@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid'; 
 
 export const postSlice = createSlice({
   name: 'post',
@@ -9,9 +10,10 @@ export const postSlice = createSlice({
         idTree:{
             "1ab5s": ["9bsln","lf9pds"],
             "9bsln": ["fbn2s"],
-            "fbn2s": [],
+            "fbn2s": ["fbn3s"],
             "mpn52s": [],
-            "lf9pds": []
+            "lf9pds": [],
+            "fbn3s": []
         },
         byId:{
             "1ab5s":{
@@ -26,9 +28,14 @@ export const postSlice = createSlice({
                 title: "example thread title"
             },
             "fbn2s":{
-                user: "username",
-                content: "example message content",
-                title: null
+              user: "username",
+              content: "example reply message content",
+              title: null
+            },
+            "fbn3s":{
+              user: "username",
+              content: "example secondary reply content",
+              title: null
             },
             "mpn52s":{
                 user: "username",
@@ -48,30 +55,46 @@ export const postSlice = createSlice({
     }
   },
   reducers: {
-    addTopic: (state, action) => {
-        return{
-            ...state,
-            [action.payload.topic] : {}
-        }
+      addTopic: (state, action) => {
+        const { topicName, title, content } = action.payload;
+        const threadId = uuidv4();
+
+        state.topics.push(threadId)
+        state.messages.idTree[topicName] = [];
+        
+        state.messages.byId[threadId] = {
+            user: 'default',
+            title: title,
+            content: content
+        };
       },
       
-    addThread: (state, action) => {
-        const { topic, threadId } = action.payload;
-        const newTopics = { ...state.topics };
-        newTopics[topic][threadId] = [];
-        return {
-          ...state,
-          topics: newTopics
+      addThread: (state, action) => {
+        const { topic, threadId, title, content } = action.payload;
+        
+        //push to topic's idTree as response
+        state.messages.idTree[topic].push(threadId);
+
+        //create idTree for thread and post data in byId
+        state.messages.idTree[threadId] = [];
+        state.messages.byId[threadId] = {
+            user: 'default',
+            title: title,
+            content: content
         };
-    },
+      },
+
     addMessage: (state, action) => {
-        const { topic, threadId, message} = action.payload;
-        const newTopics = { ...state.topics };
-        newTopics[topic][threadId].push(message);
-        return {
-          ...state,
-          topics: newTopics
-        };
+      const { replyTo, threadId, title, content } = action.payload;
+
+      state.messages.idTree[replyTo].push(threadId);
+      
+      state.messages.idTree[threadId] = [];
+      state.messages.byId[threadId] = {
+          user: 'default',
+          title: title,
+          content: content
+      };
     }
   },
 });
@@ -83,7 +106,7 @@ export const selectPosts = (state) => {
   
     //recursive function to generate tree of messages
     const buildTree = (currentId) => {
-        const childIdList = postsState.messages.idTree[currentId];
+        const childIdList = postsState.messages.idTree[currentId] || [];
         if(childIdList.length === 0 ){
             return {
                 ...postsState.messages.byId[currentId],

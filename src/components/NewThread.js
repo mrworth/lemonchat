@@ -5,7 +5,7 @@ const NewThread = ({ topic, toggleVisibility, isVisible }) => {
     return (
         <div>
             {!isVisible && <button className="toggle-button small-text" onClick={toggleVisibility}>make new {topic.title} thread</button>}
-            {isVisible && <NewPostForm toggleVisibility={toggleVisibility}/>}
+            {isVisible && <NewPostForm topic={topic} toggleVisibility={toggleVisibility}/>}
         </div>
     );
 };
