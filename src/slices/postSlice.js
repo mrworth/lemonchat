@@ -56,11 +56,11 @@ export const postSlice = createSlice({
   },
   reducers: {
       addTopic: (state, action) => {
-        const { topicName, title, content } = action.payload;
+        const { title, content } = action.payload;
         const threadId = uuidv4();
 
         state.topics.push(threadId)
-        state.messages.idTree[topicName] = [];
+        state.messages.idTree[threadId] = [];
         
         state.messages.byId[threadId] = {
             user: 'default',
@@ -85,14 +85,14 @@ export const postSlice = createSlice({
       },
 
     addMessage: (state, action) => {
-      const { replyTo, threadId, title, content } = action.payload;
+      const { replyTo, threadId, content } = action.payload;
 
       state.messages.idTree[replyTo].push(threadId);
       
       state.messages.idTree[threadId] = [];
       state.messages.byId[threadId] = {
           user: 'default',
-          title: title,
+          title: '',
           content: content
       };
     }
