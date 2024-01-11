@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid'; 
 
 export const postSlice = createSlice({
@@ -100,21 +100,26 @@ export const postSlice = createSlice({
 });
 
 export const { addTopic, addThread, addMessage } = postSlice.actions;
-export const selectPosts = (state) => {
-    const postsState = state.posts;
+
+const getTopics = (state) => state.posts.topics;
+const getMessages = (state) => state.posts.messages;
+
+export const selectPosts = createSelector(
+  [getTopics, getMessages],
+  (topics, messages) => {
     const structuredTree = [];
   
     //recursive function to generate tree of messages
     const buildTree = (currentId) => {
-        const childIdList = postsState.messages.idTree[currentId] || [];
+        const childIdList = messages.idTree[currentId] || [];
         if(childIdList.length === 0 ){
             return {
-                ...postsState.messages.byId[currentId],
+                ...messages.byId[currentId],
                 replies: []
             };
         }else{
             const currentObject = {
-                ...postsState.messages.byId[currentId],
+                ...messages.byId[currentId],
                 replies: []
             }
             for(const messageId of childIdList){
@@ -129,18 +134,18 @@ export const selectPosts = (state) => {
         }
     }
     // Iterate through the topics
-    for (const topicId of postsState.topics) {
+    for (const topicId of topics) {
       const topicItem = {
-        ...postsState.messages.byId[topicId], // Add the base topic
+        ...messages.byId[topicId], // Add the base topic
         threads: [],
         id: topicId,
         replyTo: null
       };
   
       // Iterate across child elements (threads) of topics
-      for (const threadId of postsState.messages.idTree[topicId]) {
+      for (const threadId of messages.idTree[topicId]) {
         const threadMessage = {
-            ...postsState.messages.byId[threadId],
+            ...messages.byId[threadId],
             replies: [],
             id: threadId,
             replyTo: topicId
@@ -152,6 +157,7 @@ export const selectPosts = (state) => {
       structuredTree.push(topicItem);
     }
     return structuredTree;
-  };
+  });
+  
   
 export default postSlice.reducer;
