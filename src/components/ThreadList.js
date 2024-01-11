@@ -15,11 +15,12 @@ const ThreadList = () => {
   const { contentPaneX, contentPaneY } = useSelector(selectContentPanePosition); // Assuming this selector exists
   const contentPaneRef = useRef(null);
 
-  const newTopicColumn = Array.from({ length: (focusedPosts.length/2) +1 }, (_, index) => (
-    <UniqueToggle componentName="NewTopic">
-      <NewTopic/>
+  const newTopicColumn = Array.from({ length: (focusedPosts.length / 2) + 1 }, (_, index) => (
+    <UniqueToggle key={index} componentName="NewTopic">
+      <NewTopic />
     </UniqueToggle>
   ));
+  
 
   useEffect(() => {
     if (contentPaneRef.current) {
