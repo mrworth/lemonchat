@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid'; 
-import { addThread } from '../slices/postSlice';
+import { addThread } from '../slices/actions/addThread';
 
 const NewPostForm = (props) => {
     const [title, setTitle] = useState('');
@@ -17,8 +16,8 @@ const NewPostForm = (props) => {
     });
 
     const handleSubmit = () => {
-        const threadId = uuidv4();
-        dispatch(addThread({ topic: props.topic.id, threadId, title, content }));
+        console.log(props);
+        dispatch(addThread({ topic: props.topic.topic, title, content, inReplyTo: props.topic.postId, username: "testusername" }));
         props.toggleVisibility(); 
     };
 

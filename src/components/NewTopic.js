@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { addTopic } from '../slices/postSlice'; 
+import { addReply } from '../slices/actions/addReply'; 
 
 const NewTopic = ({toggleVisibility, isVisible}) => {
-    const [topicName, setTopicName] = useState('');
+    const [topic, setTopic] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const dispatch = useDispatch();
@@ -19,10 +19,12 @@ const NewTopic = ({toggleVisibility, isVisible}) => {
     }, [isVisible]);
 
     const handleSubmit = () => {
-        dispatch(addTopic({ 
-            topicName, 
+        dispatch(addReply({ 
+            topic, 
             title, 
-            content
+            content,
+            inReplyTo: null,
+            username: "testusername"
         }));
         toggleVisibility();
     };
@@ -36,8 +38,8 @@ const NewTopic = ({toggleVisibility, isVisible}) => {
                     <div>
                         <div className="medium-text">Topic Name</div>
                         <input 
-                            value={topicName} 
-                            onChange={(e) => setTopicName(e.target.value)} 
+                            value={topic} 
+                            onChange={(e) => setTopic(e.target.value)} 
                         />
                     </div>
                     <div>

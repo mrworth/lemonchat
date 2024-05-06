@@ -1,105 +1,178 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { createSlice, createSelector, createAsyncThunk} from '@reduxjs/toolkit';
+import { fetchTopicPosts } from './actions/fetchTopicPosts';
+import { addReply } from './actions/addReply';
+import { addThread } from './actions/addThread';
+import { addTopic } from './actions/addTopic';
 import { v4 as uuidv4 } from 'uuid'; 
 
 export const postSlice = createSlice({
   name: 'post',
   initialState: {
-    topics: ["1ab5s","mpn52s"],
+    topics: [],
     messages:{
         //contains ids of posts and their replies for structure
         idTree:{
-            "1ab5s": ["9bsln","lf9pds"],
-            "9bsln": ["fbn2s"],
-            "fbn2s": ["fbn3s"],
-            "mpn52s": [],
-            "lf9pds": [],
-            "fbn3s": []
         },
         byId:{
-            "1ab5s":{
-                user: "username",
-                content: "topic description example",
-                //only used for topics and top level thread posts
-                title: "example topic"
-            },
-            "9bsln":{
-                user: "username",
-                content: "example thread content",
-                title: "example thread title"
-            },
-            "fbn2s":{
-              user: "username",
-              content: "example reply message content",
-              title: null
-            },
-            "fbn3s":{
-              user: "username",
-              content: "example secondary reply content",
-              title: null
-            },
-            "mpn52s":{
-                user: "username",
-                //description for topics, content otherwise
-                content: "topic description example 2",
-                //only used for topics and top level thread posts
-                title: "example topic 2"
-            },
-            "lf9pds":{
-                user: "username",
-                //description for topics, content otherwise
-                content: "thread description example 2",
-                //only used for topics and top level thread posts
-                title: "example thread 2"
-            }
         }
     }
   },
   reducers: {
-      addTopic: (state, action) => {
-        const { title, content } = action.payload;
-        const threadId = uuidv4();
+    // addTopic: (state, action) => {
+    //   const { title, content } = action.payload;
+    //   const threadId = uuidv4();
 
-        state.topics.push(threadId)
-        state.messages.idTree[threadId] = [];
-        
-        state.messages.byId[threadId] = {
-            user: 'default',
-            title: title,
-            content: content
-        };
-      },
+    //   state.topics.push(threadId)
+    //   state.messages.idTree[threadId] = [];
       
-      addThread: (state, action) => {
-        const { topic, threadId, title, content } = action.payload;
-        
-        //push to topic's idTree as response
-        state.messages.idTree[topic].push(threadId);
-
-        //create idTree for thread and post data in byId
-        state.messages.idTree[threadId] = [];
-        state.messages.byId[threadId] = {
-            user: 'default',
-            title: title,
-            content: content
-        };
-      },
-
-    addMessage: (state, action) => {
-      const { replyTo, threadId, content } = action.payload;
-
-      state.messages.idTree[replyTo].push(threadId);
+    //   state.messages.byId[threadId] = {
+    //       username: 'default',
+    //       title: title,
+    //       content: content
+    //   };
+    // },
+    
+    // addThread: (state, action) => {
+    //   const { topic, threadId, title, content } = action.payload;
       
-      state.messages.idTree[threadId] = [];
-      state.messages.byId[threadId] = {
-          user: 'default',
-          title: '',
-          content: content
-      };
-    }
+    //   //push to topic's idTree as response
+    //   state.messages.idTree[topic].push(threadId);
+
+    //   //create idTree for thread and post data in byId
+    //   state.messages.idTree[threadId] = [];
+    //   state.messages.byId[threadId] = {
+    //       user: 'default',
+    //       title: title,
+    //       content: content
+    //   };
+    // },
+
+    // addMessage: (state, action) => {
+    //   const { inReplyTo, threadId, content } = action.payload;
+
+    //   state.messages.idTree[inReplyTo].push(threadId);
+      
+    //   state.messages.idTree[threadId] = [];
+    //   state.messages.byId[threadId] = {
+    //       username: 'default',
+    //       title: '',
+    //       content: content
+    //   };
+    // }
+  },
+  extraReducers: (builder) => {
+    //Thunk action registration for fetching topics
+    builder
+      .addCase(fetchTopicPosts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTopicPosts.fulfilled, (state, action) => {
+        state.loading = false;
+        const posts = action.payload;
+        for(const index in posts){
+          const post = posts[index];
+          const postId = post.postId;
+          if(state.messages.byId[postId]){
+            continue;
+          }
+          const inReplyTo = post.inReplyTo;
+          //post is a topic, add to topics
+          if(inReplyTo == null){
+            state.topics.push(postId);
+          }else{
+            state.messages.idTree[inReplyTo].push(postId);
+          }
+          //add to idTree with postId and add to byId
+          state.messages.idTree[postId] = [];
+          state.messages.byId[postId] = post;
+        }
+      })
+      .addCase(fetchTopicPosts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+    //Thunk action registration for adding non-thread reply
+    builder
+      .addCase(addReply.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addReply.fulfilled, (state, action) => {
+        state.loading = false;
+        const post = action.payload;
+        const postId = post.postId;
+        const inReplyTo = post.inReplyTo;
+        //post is a topic, add to topics
+        if(inReplyTo == null){
+          state.topics.push(postId);
+        }else{
+          state.messages.idTree[inReplyTo].push(postId);
+        }
+        //add to idTree with postId and add to byId
+        state.messages.idTree[postId] = [];
+        state.messages.byId[postId] = post;
+      })
+      .addCase(addReply.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    //Thunk action registration for adding thread reply
+    builder
+      .addCase(addThread.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addThread.fulfilled, (state, action) => {
+        state.loading = false;
+        const post = action.payload;
+        const postId = post.postId;
+        const inReplyTo = post.inReplyTo;
+        //post is a topic, add to topics
+        if(inReplyTo == null){
+          state.topics.push(postId);
+        }else{
+          state.messages.idTree[inReplyTo].push(postId);
+        }
+        //add to idTree with postId and add to byId
+        state.messages.idTree[postId] = [];
+        state.messages.byId[postId] = post;
+      })
+      .addCase(addThread.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    //Thunk action registration for adding new topic
+    builder
+      .addCase(addTopic.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addTopic.fulfilled, (state, action) => {
+        state.loading = false;
+        const post = action.payload;
+        const postId = post.postId;
+        const inReplyTo = null;
+        //post is a topic, add to topics
+        if(inReplyTo == null){
+          state.topics.push(postId);
+        }else{
+          state.messages.idTree[inReplyTo].push(postId);
+        }
+        //add to idTree with postId and add to byId
+        state.messages.idTree[postId] = [];
+        state.messages.byId[postId] = post;
+      })
+      .addCase(addTopic.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const { addTopic, addThread, addMessage } = postSlice.actions;
+export const {  addMessage } = postSlice.actions;
 
 const getTopics = (state) => state.posts.topics;
 const getMessages = (state) => state.posts.messages;
@@ -126,7 +199,7 @@ export const selectPosts = createSelector(
                 const reply = buildTree(messageId);
                 currentObject.replies.push({
                     ...reply,
-                    replyTo: currentId, 
+                    inReplyTo: currentId, 
                     id: messageId
                 });
             }
@@ -139,7 +212,7 @@ export const selectPosts = createSelector(
         ...messages.byId[topicId], // Add the base topic
         threads: [],
         id: topicId,
-        replyTo: null
+        inReplyTo: null
       };
   
       // Iterate across child elements (threads) of topics
@@ -148,7 +221,7 @@ export const selectPosts = createSelector(
             ...messages.byId[threadId],
             replies: [],
             id: threadId,
-            replyTo: topicId
+            inReplyTo: topicId
         };
         const threadStructure = buildTree(threadId);
         threadMessage.replies = threadStructure.replies; // Assign replies from the structure

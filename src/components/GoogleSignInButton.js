@@ -17,6 +17,9 @@ const GoogleSignInButton = () => {
             auth2.signIn().then(googleUser => {
                 const profile = googleUser.getBasicProfile();
                 const id_token = googleUser.getAuthResponse().id_token;
+                window.googleUser = googleUser
+                window.profile = profile
+                window.authResponse = googleUser.getAuthResponse()
 
                 // Dispatching the sign in action with user profile and token
                 dispatch(signIn({

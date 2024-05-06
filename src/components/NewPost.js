@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid'; 
-import { addMessage } from '../slices/postSlice';
+import { addReply } from '../slices//actions/addReply';
 
 const NewPost = (props) => {
     const [content, setContent] = useState('');
@@ -9,11 +8,13 @@ const NewPost = (props) => {
 
     const handleSubmit = (event) => {
         event.stopPropagation();
-        const threadId = uuidv4();
-        dispatch(addMessage({ 
-            replyTo: props.replyTo, 
-            threadId: threadId, 
-            content: content
+        dispatch(addReply({ 
+            content: content,
+            //TODO: replace with state username
+            username: "testusername",
+            title: "Test Title",
+            topic: "Test Topic",
+            inReplyTo: props.inReplyTo, 
         }));
         props.toggleVisibility(event);
     };

@@ -29,12 +29,6 @@ export const focusPostSlice = createSlice({
         state.focusedPosts.length = state.focusedPosts.indexOf(parentPostId) + 1
         state.focusedPosts.push(postId);
       }
-    },
-    updateContentPanePosition: (state, action) => {
-      const { x, y } = action.payload;
-
-      state.contentPanePosition.contentPaneX = x;
-      state.contentPanePosition.contentPaneY = y;
     }
 
   }
@@ -44,6 +38,6 @@ export const selectFocusedPosts = (state) => state.focusPost.focusedPosts;
 export const selectFocusedTopic = (state) => state.focusPost.focusedTopic;
 export const selectContentPanePosition = (state) => state.focusPost.contentPanePosition;
 
-export const { focusPost, updateContentPanePosition } = focusPostSlice.actions;
+export const { focusPost } = focusPostSlice.actions;
 
 export default focusPostSlice.reducer;

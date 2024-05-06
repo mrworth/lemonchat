@@ -12,7 +12,7 @@ const store = configureStore({
     formVisibility: formVisibilityReducer,
     auth: authReducer,
   },
-  middleware: [thunk],
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 export default store;

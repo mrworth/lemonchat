@@ -5,12 +5,14 @@ import store from './store';
 import ThreadList from './components/ThreadList';
 import GapiInit from './components/GapiInit';
 import LoginData from './components/LoginData';
+import AppLoader from './components/AppLoader';
 
 function App() {
   return (
     <Provider store={store}>
       <div className="App">
         <GapiInit />
+        <AppLoader/>
         <div className="navbar"></div>
         <div className="name-bar">
             LemonChat

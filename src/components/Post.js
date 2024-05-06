@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import PostList from './PostList';
 import { useSelector, useDispatch } from 'react-redux';
-import { focusPost, updateContentPanePosition, selectFocusedPosts } from '../slices/focusPostSlice';
+import { focusPost, selectFocusedPosts } from '../slices/focusPostSlice';
 import UniqueToggle from './UniqueToggle';
 import NewPost from './NewPost';
 
@@ -23,9 +23,19 @@ const Post = (props) => {
       }));
 
       if (postRef.current) {
-        const { x, y } = postRef.current.getBoundingClientRect();
-        const modX = x - window.innerWidth * 0.10;
-        dispatch(updateContentPanePosition({ x: modX, y }));
+        const rect = postRef.current.getBoundingClientRect();
+        const contentPane = document.getElementsByClassName("content-pane")[0];
+        // Calculate the absolute position by adding the scroll offsets
+        const absoluteX = contentPane.scrollLeft + rect.left - rect.width;
+        const absoluteY = rect.top + window.scrollY - rect.height/2 - (window.outerHeight * .2);
+        window.scrollTo({
+          top: absoluteY,
+          behavior: 'smooth'
+        });
+        contentPane.scrollTo({
+          left: absoluteX,
+          behavior: 'smooth'
+        });
       }
     }
   };
@@ -66,7 +76,7 @@ const Post = (props) => {
           </div>
         </div>
       </div>
-      {showReplyForm && <NewPost replyTo={props.id} toggleVisibility={handleReply} />}
+      {showReplyForm && <NewPost inReplyTo={props.id} toggleVisibility={handleReply} />}
       {focusedPosts.includes(props.id) ? <PostList replies={props.replies} parentId={props.id} /> : ''}
     </div>
   );
